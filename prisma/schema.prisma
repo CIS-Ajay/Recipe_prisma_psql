@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Recipe {
+  id          Int           @id @default(autoincrement())
+  title       String
+  ingredients Ingredient[]  // One-to-many relationship with Ingredient
+  categoryId  Int?          // Make this field optional temporarily
+  category    Category?     @relation(fields: [categoryId], references: [id])
+  image       String?       // Optional image field
+  createdAt   DateTime      @default(now())
+}
+
+model Ingredient {
+  id          Int      @id @default(autoincrement())
+  name        String
+  recipeId    Int      // Foreign key to Recipe
+  recipe      Recipe   @relation(fields: [recipeId], references: [id])
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  recipes     Recipe[]  // One-to-many relationship with Recipe
+}
